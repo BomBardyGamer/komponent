@@ -33,7 +33,7 @@ class DSLBuilder {
 
     fun build(): Component {
         return components.fold(TextComponentBuilder("")) { acc: TextComponentBuilder, element: Component ->
-            acc.apply { children { element.extra } }
+            acc.apply { children { element } }
         }.build()
     }
 }

@@ -2,15 +2,13 @@ package me.bardy.komponent.serialisers
 
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.SerializationStrategy
-import kotlinx.serialization.builtins.ListSerializer
-import kotlinx.serialization.builtins.serializer
 import kotlinx.serialization.descriptors.SerialDescriptor
 import kotlinx.serialization.descriptors.buildClassSerialDescriptor
 import kotlinx.serialization.descriptors.element
 import kotlinx.serialization.encoding.*
 import kotlinx.serialization.serializer
 import me.bardy.komponent.*
-import me.bardy.komponent.colour.Colour
+import me.bardy.komponent.colour.Color
 import me.bardy.komponent.colour.ColourSerialiser
 import me.bardy.komponent.colour.NullableColourSerialiser
 import me.bardy.komponent.event.ClickEvent
@@ -30,7 +28,7 @@ sealed class ComponentSerialiser<T : Component>(componentName: String, private v
         element<Boolean?>("underlined", isOptional = true)
         element<Boolean?>("strikethrough", isOptional = true)
         element<Boolean?>("obfuscated", isOptional = true)
-        element<Colour?>("color", isOptional = true)
+        element<Color?>("color", isOptional = true)
         element<String?>("insertion", isOptional = true)
 
         element<ClickEvent?>("clickEvent", isOptional = true)
@@ -118,7 +116,7 @@ private fun CompositeDecoder.decodeNullableStringElement(descriptor: SerialDescr
 private data class ComponentDataWrapper(
     val content: String,
     val decoration: ComponentDecoration,
-    val colour: Colour?,
+    val color: Color?,
     val insertion: String?,
     val clickEvent: ClickEvent?,
     val hoverEvent: HoverEvent<String>?,

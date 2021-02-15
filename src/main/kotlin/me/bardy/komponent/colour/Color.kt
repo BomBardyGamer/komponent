@@ -14,23 +14,23 @@ import kotlinx.serialization.encoding.Encoder
  *
  * all these methods create an RGB colour with the RGB value 16777215
  * ```kotlin
- * Colour.fromHex("#ffffff") (# prefix is optional)
- * Colour.fromRGB(16777215)
- * Colour.fromRGB(255, 255, 255)
- * Colour.fromRGB(1.0f, 1.0f, 1.0f)
+ * Color.fromHex("#ffffff") (# prefix is optional)
+ * Color.fromRGB(16777215)
+ * Color.fromRGB(255, 255, 255)
+ * Color.fromRGB(1.0f, 1.0f, 1.0f)
  * ```
  *
- * this method attempts to convert the value to a [NamedColour], or else returns an [RGBColour]
+ * this method attempts to convert the value to a [NamedColor], or else returns an [RGBColor]
  * ```kotlin
- * Colour.fromInt(16777215)
+ * Color.fromInt(16777215)
  * ```
  *
  * @author Callum Seabrook
  *
- * @see NamedColour
- * @see RGBColour
+ * @see NamedColor
+ * @see RGBColor
  */
-interface Colour {
+interface Color {
 
     val value: Int
 
@@ -42,14 +42,14 @@ interface Colour {
          *
          * This can optionally be prefixed with the character '#'
          */
-        fun fromHex(hex: String): Colour = RGBColour(hex.removePrefix("#").toInt(16))
+        fun fromHex(hex: String): Color = RGBColor(hex.removePrefix("#").toInt(16))
 
         /**
          * Creates a new RGB colour from the [rgb] value provided by converting the [rgb] value to an integer
          *
          * @see RGB.toInt
          */
-        fun fromRGB(rgb: RGB): Colour = RGBColour(rgb.toInt())
+        fun fromRGB(rgb: RGB): Color = RGBColor(rgb.toInt())
 
         /**
          * Creates a new RGB colour from the [red], [green] and [blue] values provided by converting them to
@@ -57,7 +57,7 @@ interface Colour {
          *
          * @see RGB.toInt
          */
-        fun fromRGB(red: Int, green: Int, blue: Int): Colour = RGBColour(RGB(red, green, blue).toInt())
+        fun fromRGB(red: Int, green: Int, blue: Int): Color = RGBColor(RGB(red, green, blue).toInt())
 
         /**
          * Creates a new RGB colour from the [red], [green] and [blue] values provided by converting them to
@@ -66,43 +66,43 @@ interface Colour {
          * @see RGB.fromFloatRGB
          * @see RGB.toInt
          */
-        fun fromRGB(red: Float, green: Float, blue: Float): Colour = RGBColour(RGB.fromFloatRGB(red, green, blue).toInt())
+        fun fromRGB(red: Float, green: Float, blue: Float): Color = RGBColor(RGB.fromFloatRGB(red, green, blue).toInt())
 
         /**
-         * Attempts to get a [NamedColour] with the specified RGB [value], or else creates a new RGB colour from
+         * Attempts to get a [NamedColor] with the specified RGB [value], or else creates a new RGB colour from
          * the [value] provided
          */
-        fun fromInt(value: Int): Colour {
-            val named = NamedColour.from(value)
-            return named ?: RGBColour(value)
+        fun fromInt(value: Int): Color {
+            val named = NamedColor.from(value)
+            return named ?: RGBColor(value)
         }
     }
 }
 
-internal object ColourSerialiser : KSerializer<Colour> {
+internal object ColourSerialiser : KSerializer<Color> {
 
     override val descriptor = PrimitiveSerialDescriptor("Colour", PrimitiveKind.INT)
 
-    override fun deserialize(decoder: Decoder): Colour {
+    override fun deserialize(decoder: Decoder): Color {
         val value = decoder.decodeString().removePrefix("#").toInt(16)
-        return NamedColour.from(value) ?: RGBColour(value)
+        return NamedColor.from(value) ?: RGBColor(value)
     }
 
-    override fun serialize(encoder: Encoder, value: Colour) {
+    override fun serialize(encoder: Encoder, value: Color) {
         encoder.encodeString(value.value.toHexString())
     }
 }
 
-internal object NullableColourSerialiser : KSerializer<Colour?> {
+internal object NullableColourSerialiser : KSerializer<Color?> {
 
     override val descriptor = PrimitiveSerialDescriptor("Colour", PrimitiveKind.INT)
 
-    override fun deserialize(decoder: Decoder): Colour {
+    override fun deserialize(decoder: Decoder): Color {
         val value = decoder.decodeString().removePrefix("#").toInt(16)
-        return NamedColour.from(value) ?: RGBColour(value)
+        return NamedColor.from(value) ?: RGBColor(value)
     }
 
-    override fun serialize(encoder: Encoder, value: Colour?) {
+    override fun serialize(encoder: Encoder, value: Color?) {
         if (value != null) encoder.encodeString(value.value.toHexString())
     }
 }

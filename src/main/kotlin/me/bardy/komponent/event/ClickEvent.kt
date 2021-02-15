@@ -5,6 +5,7 @@
     ChangePageSerialiser::class,
     CopyToClipboardSerialiser::class
 )
+@file:Suppress("unused") // API functions
 package me.bardy.komponent.event
 
 import kotlinx.serialization.Serializable
@@ -23,39 +24,6 @@ sealed class ClickEvent(
     val content: String
 ) {
 
-    @Suppress("unused") // API functions
-    companion object {
-
-        /**
-         * Creates a new [ClickEvent] which opens a URL when clicked
-         */
-        fun openURL(url: String) = OpenURL(url)
-
-        /**
-         * Creates a new [ClickEvent] which runs a command when clicked
-         */
-        fun runCommand(command: String) = RunCommand(command)
-
-        /**
-         * Creates a new [ClickEvent] which suggests a command to run when clicked
-         */
-        fun suggestCommand(suggestedCommand: String) = SuggestCommand(suggestedCommand)
-
-        /**
-         * Creates a new [ClickEvent] which changes the current page of the book the user has opened
-         * when clicked
-         *
-         * Requires that the user has a book opened to function correctly
-         */
-        fun changePage(page: Int) = ChangePage(page.toString())
-
-        /**
-         * Creates a new [ClickEvent] which copies the specified [value] to the user's clipboard when
-         * clicked
-         */
-        fun copyToClipboard(value: String) = CopyToClipboard(value)
-    }
-
     @Serializable
     data class OpenURL internal constructor(val url: String) : ClickEvent(ClickAction.OPEN_URL, url)
 
@@ -71,6 +39,35 @@ sealed class ClickEvent(
     @Serializable
     data class CopyToClipboard internal constructor(val value: String) : ClickEvent(ClickAction.COPY_TO_CLIPBOARD, value)
 }
+
+/**
+ * Creates a new [ClickEvent] which opens a URL when clicked
+ */
+fun openURL(url: String) = ClickEvent.OpenURL(url)
+
+/**
+ * Creates a new [ClickEvent] which runs a command when clicked
+ */
+fun runCommand(command: String) = ClickEvent.RunCommand(command)
+
+/**
+ * Creates a new [ClickEvent] which suggests a command to run when clicked
+ */
+fun suggestCommand(suggestedCommand: String) = ClickEvent.SuggestCommand(suggestedCommand)
+
+/**
+ * Creates a new [ClickEvent] which changes the current page of the book the user has opened
+ * when clicked
+ *
+ * Requires that the user has a book opened to function correctly
+ */
+fun changePage(page: Int) = ClickEvent.ChangePage(page.toString())
+
+/**
+ * Creates a new [ClickEvent] which copies the specified [value] to the user's clipboard when
+ * clicked
+ */
+fun copyToClipboard(value: String) = ClickEvent.CopyToClipboard(value)
 
 /**
  * Actions for [ClickEvent]

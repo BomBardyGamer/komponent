@@ -8,7 +8,7 @@ import kotlinx.serialization.Serializable
  * @author Callum Seabrook
  */
 @Serializable(with = ColourSerialiser::class)
-enum class NamedColour(override val value: Int) : Colour {
+enum class NamedColor(override val value: Int) : Color {
 
     BLACK(0x000000),
     DARK_BLUE(0x0000AA),
@@ -31,7 +31,7 @@ enum class NamedColour(override val value: Int) : Colour {
 
     companion object {
 
-        fun from(value: Int): NamedColour? = when (value) {
+        fun from(value: Int): NamedColor? = when (value) {
             BLACK.value -> BLACK
             DARK_BLUE.value -> DARK_BLUE
             DARK_GREEN.value -> DARK_GREEN

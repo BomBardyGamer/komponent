@@ -1,7 +1,7 @@
 package me.bardy.komponent
 
 import kotlinx.serialization.Serializable
-import me.bardy.komponent.colour.Colour
+import me.bardy.komponent.colour.Color
 import me.bardy.komponent.event.ClickEvent
 import me.bardy.komponent.event.HoverEvent
 import me.bardy.komponent.serialisers.TranslationComponentSerialiser
@@ -18,7 +18,7 @@ import me.bardy.komponent.serialisers.TranslationComponentSerialiser
 data class TranslationComponent(
     override val value: String,
     override val decoration: ComponentDecoration,
-    override val colour: Colour? = null,
+    override val colour: Color? = null,
     override val insertion: String? = null,
     override val clickEvent: ClickEvent? = null,
     override val hoverEvent: HoverEvent<*>? = null,

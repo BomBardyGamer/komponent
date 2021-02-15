@@ -1,19 +1,16 @@
+@file:Suppress("unused") // API functions
 package me.bardy.komponent.event
 
 import kotlinx.serialization.Serializable
 
 // W.I.P
 @Serializable
-class HoverEvent<T> private constructor(
+class HoverEvent<T> internal constructor(
     val action: HoverAction,
     val content: T
-) {
+)
 
-    companion object {
-
-        fun showText(text: String) = HoverEvent(HoverAction.SHOW_TEXT, text)
-    }
-}
+fun showText(text: String) = HoverEvent(HoverAction.SHOW_TEXT, text)
 
 enum class HoverAction {
 

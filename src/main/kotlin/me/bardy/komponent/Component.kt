@@ -1,12 +1,11 @@
 package me.bardy.komponent
 
 import kotlinx.serialization.Serializable
-import me.bardy.komponent.colour.Colour
+import me.bardy.komponent.colour.Color
 import me.bardy.komponent.dsl.DSLBuilder
 import me.bardy.komponent.dsl.FormatBuilder
 import me.bardy.komponent.event.ClickEvent
 import me.bardy.komponent.event.HoverEvent
-import me.bardy.komponent.serialisers.ComponentSerialiser
 
 /**
  * The superinterface for all chat components
@@ -19,7 +18,7 @@ interface Component {
 
     val decoration: ComponentDecoration
 
-    val colour: Colour?
+    val colour: Color?
 
     val insertion: String?
 
@@ -31,7 +30,7 @@ interface Component {
 
     interface Builder {
 
-        val colour: Colour?
+        val color: Color?
 
         val insertion: String?
 

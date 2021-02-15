@@ -1,6 +1,6 @@
 package me.bardy.komponent
 
-import me.bardy.komponent.colour.NamedColour
+import me.bardy.komponent.colour.NamedColor
 import me.bardy.komponent.dsl.component
 import me.bardy.komponent.event.ClickEvent
 import me.bardy.komponent.event.HoverEvent
@@ -10,7 +10,7 @@ class DSLTest {
     fun `komponent DSL test`() {
         component {
             text("Hello World!") {
-                colour = NamedColour.BLACK
+                color = NamedColor.BLACK
                 formatting {
                     bold = true
                     italic = true

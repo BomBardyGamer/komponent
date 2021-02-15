@@ -8,9 +8,9 @@ import kotlinx.serialization.Serializable
  * @author Callum Seabrook
  */
 @Serializable(with = ColourSerialiser::class)
-internal data class RGBColour(
+internal data class RGBColor(
     override val value: Int
-) : Colour
+) : Color
 
 /**
  * Represents an RGB colour (separate values of red, green and blue)
