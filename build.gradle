@@ -1,0 +1,36 @@
+plugins {
+    id 'org.jetbrains.kotlin.jvm' version '1.4.30'
+    id 'org.jetbrains.kotlin.plugin.serialization' version '1.4.30'
+}
+
+group 'me.bristermitten'
+version '1.0-SNAPSHOT'
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    implementation 'org.jetbrains.kotlin:kotlin-stdlib'
+
+    implementation 'org.jetbrains.kotlinx:kotlinx-serialization-json:1.0.1'
+
+    testImplementation 'org.jetbrains.kotlin:kotlin-test-junit5'
+    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.7.1'
+    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.7.1'
+}
+
+compileKotlin {
+    kotlinOptions {
+        jvmTarget = '11'
+        freeCompilerArgs = ["-Xopt-in=kotlinx.serialization.ExperimentalSerializationApi"]
+    }
+}
+
+compileTestKotlin {
+    kotlinOptions.jvmTarget = '11'
+}
+
+test {
+    useJUnitPlatform()
+}
