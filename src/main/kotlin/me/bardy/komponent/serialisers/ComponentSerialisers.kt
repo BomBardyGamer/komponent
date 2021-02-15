@@ -11,7 +11,9 @@ import me.bardy.komponent.*
 import me.bardy.komponent.colour.Color
 import me.bardy.komponent.colour.ColourSerialiser
 import me.bardy.komponent.colour.NullableColourSerialiser
+import me.bardy.komponent.event.ClickAction.*
 import me.bardy.komponent.event.ClickEvent
+import me.bardy.komponent.event.ClickEvent.*
 import me.bardy.komponent.event.HoverEvent
 
 /**
@@ -19,7 +21,11 @@ import me.bardy.komponent.event.HoverEvent
  *
  * @author Callum Seabrook
  */
-sealed class ComponentSerialiser<T : Component>(componentName: String, private val keyName: String, private val extraName: String = "extra") : SerializationStrategy<T> {
+sealed class ComponentSerialiser<T : Component>(
+    componentName: String,
+    private val keyName: String,
+    private val extraName: String = "extra"
+) : SerializationStrategy<T> {
 
     override val descriptor = buildClassSerialDescriptor(componentName) {
         element<String>(keyName)
@@ -54,7 +60,13 @@ sealed class ComponentSerialiser<T : Component>(componentName: String, private v
             if (insertion != null) encodeStringElement(descriptor, 7, insertion)
 
             val clickEvent = value.clickEvent
-            if (clickEvent != null) encodeSerializableElement(descriptor, 8, serializer(), clickEvent)
+            if (clickEvent != null) when (clickEvent.action) {
+                OPEN_URL -> encodeSerializableElement(descriptor, 8, OpenURLSerialiser, clickEvent as OpenURL)
+                RUN_COMMAND -> encodeSerializableElement(descriptor, 8, RunCommandSerialiser, clickEvent as RunCommand)
+                SUGGEST_COMMAND -> encodeSerializableElement(descriptor, 8, SuggestCommandSerialiser, clickEvent as SuggestCommand)
+                CHANGE_PAGE -> encodeSerializableElement(descriptor, 8, ChangePageSerialiser, clickEvent as ChangePage)
+                COPY_TO_CLIPBOARD -> encodeSerializableElement(descriptor, 8, CopyToClipboardSerialiser, clickEvent as CopyToClipboard)
+            }
 
             val hoverEvent = value.hoverEvent
             if (hoverEvent != null) encodeSerializableElement(descriptor, 9, serializer(), hoverEvent)
@@ -76,7 +88,9 @@ object TextComponentSerialiser : ComponentSerialiser<TextComponent>("TextCompone
 object TranslationComponentSerialiser : ComponentSerialiser<TranslationComponent>("TranslationComponent", "translation", "with"), KSerializer<TranslationComponent> {
 
     override fun deserialize(decoder: Decoder): TranslationComponent = decoder.decodeStructure(descriptor) {
-        val (translationKey, decoration, colour, insertion, clickEvent, hoverEvent, with) = decodeComponentElement(descriptor)
+        val (translationKey, decoration, colour, insertion, clickEvent, hoverEvent, with) = decodeComponentElement(
+            descriptor
+        )
         TranslationComponent(translationKey, decoration, colour, insertion, clickEvent, hoverEvent, with)
     }
 }

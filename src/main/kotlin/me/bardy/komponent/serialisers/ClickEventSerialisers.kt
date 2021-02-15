@@ -16,7 +16,7 @@ import me.bardy.komponent.event.ClickEvent.*
  *
  * @author Callum Seabrook
  */
-sealed class ClickEventSerialiser<T : ClickEvent>(private val eventName: String, private val keyName: String) : SerializationStrategy<T> {
+sealed class ClickEventSerialiser<in T : ClickEvent>(eventName: String, private val keyName: String) : SerializationStrategy<T> {
 
     override val descriptor = buildClassSerialDescriptor(eventName) {
         element<String>(keyName)

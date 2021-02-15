@@ -8,7 +8,7 @@ import me.bardy.komponent.colour.Color
 import me.bardy.komponent.event.ClickEvent
 import me.bardy.komponent.event.HoverEvent
 
-sealed class ComponentBuilder : Component.Builder {
+abstract class ComponentBuilder internal constructor() : Component.Builder {
 
     protected val children: MutableList<Component> = mutableListOf()
 

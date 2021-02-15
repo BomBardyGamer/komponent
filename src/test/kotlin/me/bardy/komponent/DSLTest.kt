@@ -4,6 +4,8 @@ import me.bardy.komponent.colour.NamedColor
 import me.bardy.komponent.dsl.component
 import me.bardy.komponent.event.ClickEvent
 import me.bardy.komponent.event.HoverEvent
+import me.bardy.komponent.event.openURL
+import me.bardy.komponent.event.showText
 
 class DSLTest {
 
@@ -15,8 +17,8 @@ class DSLTest {
                     bold = true
                     italic = true
                 }
-                clickEvent = ClickEvent.openURL("https://example.com")
-                hoverEvent = HoverEvent.showText("Click me")
+                clickEvent = openURL("https://example.com")
+                hoverEvent = showText("Click me")
 
                 children {
                     text("I am a child!")

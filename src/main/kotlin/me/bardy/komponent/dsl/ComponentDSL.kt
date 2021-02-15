@@ -1,6 +1,7 @@
 package me.bardy.komponent.dsl
 
 import me.bardy.komponent.Component
+import me.bardy.komponent.TextComponent
 
 @DslMarker
 annotation class ComponentDSL
@@ -12,28 +13,28 @@ inline fun component(builder: DSLBuilder.() -> Unit): Component {
 }
 
 @ComponentDSL
-class DSLBuilder {
-
-    private val components = mutableListOf<Component>()
+class DSLBuilder : ComponentBuilder() {
 
     @ComponentDSL
     fun text(value: String, builder: TextComponentBuilder.() -> Unit = {}) {
-        components += TextComponentBuilder(value).apply(builder).build()
+        children += TextComponentBuilder(value).apply(builder).build()
     }
 
     @ComponentDSL
     fun translation(key: String, with: TranslationComponentBuilder.() -> Unit = {}) {
-        components += TranslationComponentBuilder(key).apply(with).build()
+        children += TranslationComponentBuilder(key).apply(with).build()
     }
 
     @ComponentDSL
     fun keybind(keybind: String, builder: KeybindComponentBuilder.() -> Unit = {}) {
-        components += KeybindComponentBuilder(keybind).apply(builder).build()
+        children += KeybindComponentBuilder(keybind).apply(builder).build()
     }
 
-    fun build(): Component {
-        return components.fold(TextComponentBuilder("")) { acc: TextComponentBuilder, element: Component ->
-            acc.apply { children { element } }
-        }.build()
+    // TODO: Figure out how to make this work, because I haven't a clue at the moment
+    override fun build(): Component {
+//        return children.fold(this) { acc, element ->
+//            acc.childre
+//        }.build()
+        return TextComponentBuilder("").build()
     }
 }

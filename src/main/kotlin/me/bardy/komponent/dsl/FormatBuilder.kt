@@ -5,19 +5,19 @@ import me.bardy.komponent.ComponentDecoration
 class FormatBuilder internal constructor() {
 
     @ComponentDSL
-    var bold = false
+    var bold: Boolean? = null
 
     @ComponentDSL
-    var italic = false
+    var italic: Boolean? = null
 
     @ComponentDSL
-    var underlined = false
+    var underlined: Boolean? = null
 
     @ComponentDSL
-    var strikethrough = false
+    var strikethrough: Boolean? = null
 
     @ComponentDSL
-    var obfuscated = false
+    var obfuscated: Boolean? = null
 
     fun build() = ComponentDecoration(bold, italic, underlined, strikethrough, obfuscated)
 }
