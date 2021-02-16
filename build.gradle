@@ -3,8 +3,8 @@ plugins {
     id 'org.jetbrains.kotlin.plugin.serialization' version '1.4.30'
 }
 
-group 'me.bristermitten'
-version '1.0-SNAPSHOT'
+group 'me.bardy'
+version '1.0'
 
 repositories {
     mavenCentral()
