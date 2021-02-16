@@ -54,7 +54,7 @@ abstract class Component protected constructor() {
 }
 
 @Serializable(with = TextComponent.Companion::class)
-data class TextComponent(
+data class TextComponent internal constructor(
     @SerialName("text") val text: String,
     override val bold: Boolean?,
     override val italic: Boolean?,
@@ -89,7 +89,7 @@ data class TextComponent(
 }
 
 @Serializable(with = TranslationComponent.Companion::class)
-data class TranslationComponent(
+data class TranslationComponent internal constructor(
     @SerialName("translate") val translationKey: String,
     override val bold: Boolean?,
     override val italic: Boolean?,
@@ -124,7 +124,7 @@ data class TranslationComponent(
 }
 
 @Serializable(with = KeybindComponent.Companion::class)
-data class KeybindComponent(
+data class KeybindComponent internal constructor(
     @SerialName("keybind") val keybind: String,
     override val bold: Boolean?,
     override val italic: Boolean?,
@@ -159,7 +159,7 @@ data class KeybindComponent(
 }
 
 @Serializable(with = ScoreComponent.Companion::class)
-data class ScoreComponent(
+data class ScoreComponent internal constructor(
     @SerialName("score") val score: Score,
     override val bold: Boolean?,
     override val italic: Boolean?,

@@ -16,7 +16,7 @@ import me.bardy.komponent.event.showText
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
-// TESTS ARE CURRENTLY BROKEN! IGNORE THEM!
+// tests are a W.I.P
 class SerialiserTest {
 
     @Test

@@ -1,6 +1,5 @@
 package me.bardy.komponent
 
-import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import me.bardy.komponent.colour.NamedColor
 import me.bardy.komponent.dsl.component
@@ -9,6 +8,7 @@ import me.bardy.komponent.event.showText
 import org.junit.jupiter.api.assertThrows
 import kotlin.test.Test
 
+// tests are a W.I.P
 class DSLTest {
 
     @Test
