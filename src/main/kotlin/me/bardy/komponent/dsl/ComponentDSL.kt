@@ -1,7 +1,6 @@
 package me.bardy.komponent.dsl
 
 import me.bardy.komponent.Component
-import kotlin.contracts.contract
 
 @DslMarker
 annotation class ComponentDSL

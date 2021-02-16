@@ -3,8 +3,7 @@ package me.bardy.komponent
 import kotlinx.serialization.json.Json
 import me.bardy.komponent.colour.NamedColor
 import me.bardy.komponent.dsl.component
-import me.bardy.komponent.event.openURL
-import me.bardy.komponent.event.showText
+import me.bardy.komponent.event.*
 import org.junit.jupiter.api.assertThrows
 import kotlin.test.Test
 
@@ -25,7 +24,7 @@ class DSLTest {
                 }
                 insertion = "I am insertion text!"
                 clickEvent = openURL("https://example.com")
-                hoverEvent = showText("I am hover text!")
+                hoverEvent = showItem(Item(3, 3))
 
                 children {
                     translation("i.am.a.translation.key") {

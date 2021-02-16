@@ -6,6 +6,7 @@ import kotlinx.serialization.descriptors.PrimitiveKind
 import kotlinx.serialization.descriptors.PrimitiveSerialDescriptor
 import kotlinx.serialization.encoding.Decoder
 import kotlinx.serialization.encoding.Encoder
+import kotlin.random.Random
 
 /**
  * Represents an RGB colour. Stored as a single RGB integer, where the bits 16-23 represent
@@ -36,8 +37,10 @@ interface Color {
 
     val value: Int
 
-    @Suppress("unused") // API functions
+    @Suppress("unused", "MemberVisibilityCanBePrivate") // API functions
     companion object {
+
+        private const val RGB_MAX_VALUE = 16777215
 
         /**
          * Creates a new RGB colour from the [hex] string provided
@@ -78,6 +81,11 @@ interface Color {
             val named = NamedColor.from(value)
             return named ?: RGBColor(value)
         }
+
+        /**
+         * Randomly generates an RGB colour from the given random generator (defaults to [Random.Default])
+         */
+        fun random(random: Random = Random.Default) = fromInt(random.nextInt(RGB_MAX_VALUE))
     }
 }
 

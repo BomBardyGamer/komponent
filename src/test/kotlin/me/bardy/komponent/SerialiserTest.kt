@@ -1,18 +1,14 @@
 package me.bardy.komponent
 
-import kotlinx.serialization.builtins.ListSerializer
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
-import kotlinx.serialization.modules.SerializersModule
-import kotlinx.serialization.modules.contextual
 import kotlinx.serialization.serializer
 import me.bardy.komponent.colour.Color
-import me.bardy.komponent.colour.ColourSerialiser
 import me.bardy.komponent.colour.EmptyColor
 import me.bardy.komponent.dsl.component
-import me.bardy.komponent.event.openURL
-import me.bardy.komponent.event.showText
+import me.bardy.komponent.event.*
+import java.util.*
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
