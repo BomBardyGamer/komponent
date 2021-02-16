@@ -1,10 +1,10 @@
 package me.bardy.komponent.serialisers
 
 import kotlinx.serialization.Serializable
+import kotlinx.serialization.builtins.ListSerializer
 import kotlinx.serialization.descriptors.*
 import kotlinx.serialization.encoding.CompositeDecoder
 import kotlinx.serialization.encoding.CompositeEncoder
-import kotlinx.serialization.serializer
 import me.bardy.komponent.Component
 import me.bardy.komponent.colour.Color
 import me.bardy.komponent.colour.ColourSerialiser
@@ -22,7 +22,7 @@ fun ClassSerialDescriptorBuilder.componentElements(extraName: String = "extra") 
     element<String>("insertion", isOptional = true)
     element<ClickEvent>("clickEvent", isOptional = true)
     element<HoverEvent>("hoverEvent", isOptional = true)
-    element(extraName, serializer<List<Component>>().descriptor, isOptional = true)
+    element(extraName, Component.descriptor, isOptional = true)
 }
 
 fun CompositeEncoder.encodeComponentElements(descriptor: SerialDescriptor, component: Component) {
@@ -35,7 +35,7 @@ fun CompositeEncoder.encodeComponentElements(descriptor: SerialDescriptor, compo
     if (component.insertion != null) encodeStringElement(descriptor, 7, requireNotNull(component.insertion))
     if (component.clickEvent != null) encodeSerializableElement(descriptor, 8, ClickEvent.serializer(), requireNotNull(component.clickEvent))
     if (component.hoverEvent != null) encodeSerializableElement(descriptor, 9, HoverEvent.serializer(), requireNotNull(component.hoverEvent))
-    if (component.extra.isNotEmpty()) encodeSerializableElement(descriptor, 10, serializer(), component.extra)
+    if (component.extra.isNotEmpty()) encodeSerializableElement(descriptor, 10, ListSerializer(Component.Companion), component.extra)
 }
 
 fun CompositeDecoder.decodeComponent(descriptor: SerialDescriptor) = ComponentData(
@@ -67,7 +67,7 @@ fun CompositeDecoder.decodeHoverEvent(descriptor: SerialDescriptor, index: Int) 
     if (decodeElementIndex(descriptor) == index) decodeSerializableElement(descriptor, index, HoverEvent.serializer()) else null
 
 fun CompositeDecoder.decodeComponentList(descriptor: SerialDescriptor, index: Int) =
-    if (decodeElementIndex(descriptor) == index) decodeSerializableElement(descriptor, index, serializer<List<Component>>()) else emptyList()
+    if (decodeElementIndex(descriptor) == index) decodeSerializableElement(descriptor, index, ListSerializer(Component.Companion)) else emptyList()
 
 // An object primarily for use in component serialisers, for easy destructuring
 data class ComponentData internal constructor(

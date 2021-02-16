@@ -109,4 +109,4 @@ internal object ColourSerialiser : KSerializer<Color> {
  *
  * @author Callum Seabrook
  */
-fun Int.toHexString(): String = "#${Integer.toHexString(this)}"
+fun Int.toHexString(): String = "#${Integer.toHexString(this).padEnd(6, '0')}"

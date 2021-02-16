@@ -1,36 +1,45 @@
 package me.bardy.komponent.dsl
 
 import me.bardy.komponent.Component
+import kotlin.contracts.contract
 
 @DslMarker
 annotation class ComponentDSL
 
 
 @ComponentDSL
-inline fun component(builder: DSLBuilder.() -> Unit): Component {
-    return DSLBuilder().apply(builder).build()
+inline fun component(builder: RootComponentBuilder.() -> Unit): Component {
+    return RootComponentBuilder().apply(builder).build()
 }
 
 @ComponentDSL
-class DSLBuilder : ComponentBuilder() {
+class RootComponentBuilder : ComponentBuilder() {
+
+    private var rootComponent: Component? = null
 
     @ComponentDSL
     fun text(value: String, builder: TextComponentBuilder.() -> Unit = {}) {
-        children += TextComponentBuilder(value).apply(builder).build()
+        if (rootComponent != null) throw rootComponentSet()
+        rootComponent = TextComponentBuilder(value).apply(builder).build()
     }
 
     @ComponentDSL
     fun translation(key: String, with: TranslationComponentBuilder.() -> Unit = {}) {
-        children += TranslationComponentBuilder(key).apply(with).build()
+        if (rootComponent != null) throw rootComponentSet()
+        rootComponent = TranslationComponentBuilder(key).apply(with).build()
     }
 
     @ComponentDSL
     fun keybind(keybind: String, builder: KeybindComponentBuilder.() -> Unit = {}) {
-        children += KeybindComponentBuilder(keybind).apply(builder).build()
+        if (rootComponent != null) throw rootComponentSet()
+        rootComponent = KeybindComponentBuilder(keybind).apply(builder).build()
     }
+
+    private fun rootComponentSet() = UnsupportedOperationException("Root component has already been set!")
 
     // TODO: Figure out how to make this work, because I haven't a clue at the moment
     fun build(): Component {
-        return TextComponentBuilder("").build()
+        if (rootComponent == null) throw UnsupportedOperationException("Root component must be set!")
+        return requireNotNull(rootComponent)
     }
 }

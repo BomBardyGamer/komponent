@@ -31,14 +31,14 @@ abstract class ComponentBuilder internal constructor() {
     fun formatting(builder: FormatBuilder.() -> Unit) = formatting.apply(builder)
 
     @ComponentDSL
-    fun children(builder: DSLBuilder.() -> Unit): Component {
-        val component = DSLBuilder().apply(builder).build()
+    fun children(builder: RootComponentBuilder.() -> Unit): Component {
+        val component = RootComponentBuilder().apply(builder).build()
         children += component
         return component
     }
 }
 
-class TextComponentBuilder internal constructor(private val text: String) : ComponentBuilder() {
+class TextComponentBuilder(private val text: String) : ComponentBuilder() {
 
     fun build(): TextComponent {
         val (bold, italic, underlined, strikethrough, obfuscated) = formatting.build()

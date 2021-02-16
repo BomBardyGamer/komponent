@@ -1,14 +1,15 @@
 package me.bardy.komponent
 
-import kotlinx.serialization.KSerializer
-import kotlinx.serialization.SerialName
-import kotlinx.serialization.Serializable
+import kotlinx.serialization.*
 import kotlinx.serialization.descriptors.buildClassSerialDescriptor
 import kotlinx.serialization.descriptors.element
 import kotlinx.serialization.encoding.Decoder
 import kotlinx.serialization.encoding.Encoder
 import kotlinx.serialization.encoding.decodeStructure
 import kotlinx.serialization.encoding.encodeStructure
+import kotlinx.serialization.json.JsonContentPolymorphicSerializer
+import kotlinx.serialization.json.JsonElement
+import kotlinx.serialization.json.jsonObject
 import me.bardy.komponent.colour.Color
 import me.bardy.komponent.colour.ColourSerialiser
 import me.bardy.komponent.event.ClickEvent
@@ -39,6 +40,17 @@ abstract class Component protected constructor() {
     abstract val hoverEvent: HoverEvent?
 
     abstract val extra: List<Component>
+
+    companion object : JsonContentPolymorphicSerializer<Component>(Component::class) {
+
+        override fun selectDeserializer(element: JsonElement): DeserializationStrategy<out Component> = when {
+            "text" in element.jsonObject -> TextComponent.Companion
+            "translate" in element.jsonObject -> TranslationComponent.Companion
+            "keybind" in element.jsonObject -> KeybindComponent.Companion
+            "score" in element.jsonObject -> ScoreComponent.Companion
+            else -> serializer() // we should never reach here
+        }
+    }
 }
 
 @Serializable(with = TextComponent.Companion::class)

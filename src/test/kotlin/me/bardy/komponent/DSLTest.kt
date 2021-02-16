@@ -1,36 +1,53 @@
 package me.bardy.komponent
 
+import kotlinx.serialization.encodeToString
+import kotlinx.serialization.json.Json
 import me.bardy.komponent.colour.NamedColor
 import me.bardy.komponent.dsl.component
-import me.bardy.komponent.event.ClickEvent
-import me.bardy.komponent.event.HoverEvent
 import me.bardy.komponent.event.openURL
 import me.bardy.komponent.event.showText
+import org.junit.jupiter.api.assertThrows
+import kotlin.test.Test
 
 class DSLTest {
 
-    fun `komponent DSL test`() {
-        component {
-            text("Hello World!") {
+    @Test
+    fun `DSL serialises properly`() {
+        val component = component {
+            text("Hello world!") {
                 color = NamedColor.BLACK
                 formatting {
                     bold = true
                     italic = true
+                    underlined = true
+                    strikethrough = true
+                    obfuscated = true
                 }
+                insertion = "I am insertion text!"
                 clickEvent = openURL("https://example.com")
-                hoverEvent = showText("Click me")
+                hoverEvent = showText("I am hover text!")
 
                 children {
-                    text("I am a child!")
+                    translation("i.am.a.translation.key") {
+                        color = NamedColor.AQUA
+                        formatting {
+                            bold = false
+                            italic = false
+                        }
+                    }
                 }
             }
+        }
 
-            translation("chat.type.text") {
+        println(Json {}.encodeToString(Component.Companion, component))
+    }
 
-            }
-
-            keybind("key.forward") {
-
+    @Test
+    fun `DSL throws exception when multiple root components are defined`() {
+        assertThrows<UnsupportedOperationException> {
+            component {
+                text("")
+                translation("")
             }
         }
     }
