@@ -24,6 +24,13 @@ data class RGB(
     val blue: Int
 ) {
 
+    init {
+        // ensure provided values are within the bounds of RGB
+        require(red in 0..255 && green in 0..255 && blue in 0..255) {
+            "Provided values are not within the limits of RGB! Each value must be between 0-255!"
+        }
+    }
+
     /**
      * Converts this RGB colour to a single RGB integer
      */

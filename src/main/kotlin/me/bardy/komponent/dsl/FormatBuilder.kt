@@ -1,7 +1,5 @@
 package me.bardy.komponent.dsl
 
-import me.bardy.komponent.ComponentDecoration
-
 class FormatBuilder internal constructor() {
 
     @ComponentDSL
@@ -21,3 +19,11 @@ class FormatBuilder internal constructor() {
 
     fun build() = ComponentDecoration(bold, italic, underlined, strikethrough, obfuscated)
 }
+
+data class ComponentDecoration internal constructor(
+    val bold: Boolean?,
+    val italic: Boolean?,
+    val underlined: Boolean?,
+    val strikethrough: Boolean?,
+    val obfuscated: Boolean?
+)

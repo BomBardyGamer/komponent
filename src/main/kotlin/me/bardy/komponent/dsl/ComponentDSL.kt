@@ -1,7 +1,6 @@
 package me.bardy.komponent.dsl
 
 import me.bardy.komponent.Component
-import me.bardy.komponent.TextComponent
 
 @DslMarker
 annotation class ComponentDSL
@@ -31,10 +30,7 @@ class DSLBuilder : ComponentBuilder() {
     }
 
     // TODO: Figure out how to make this work, because I haven't a clue at the moment
-    override fun build(): Component {
-//        return children.fold(this) { acc, element ->
-//            acc.childre
-//        }.build()
+    fun build(): Component {
         return TextComponentBuilder("").build()
     }
 }

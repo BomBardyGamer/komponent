@@ -5,32 +5,33 @@ import me.bardy.komponent.KeybindComponent
 import me.bardy.komponent.TextComponent
 import me.bardy.komponent.TranslationComponent
 import me.bardy.komponent.colour.Color
+import me.bardy.komponent.colour.EmptyColor
 import me.bardy.komponent.event.ClickEvent
 import me.bardy.komponent.event.HoverEvent
 
-abstract class ComponentBuilder internal constructor() : Component.Builder {
+abstract class ComponentBuilder internal constructor() {
 
     protected val children: MutableList<Component> = mutableListOf()
 
     protected val formatting = FormatBuilder()
 
     @ComponentDSL
-    override var color: Color? = null
+    var color: Color = EmptyColor
 
     @ComponentDSL
-    override var insertion: String? = null
+    var insertion: String? = null
 
     @ComponentDSL
-    override var clickEvent: ClickEvent? = null
+    var clickEvent: ClickEvent? = null
 
     @ComponentDSL
-    override var hoverEvent: HoverEvent<String>? = null
+    var hoverEvent: HoverEvent? = null
 
     @ComponentDSL
-    override fun formatting(builder: FormatBuilder.() -> Unit) = formatting.apply(builder)
+    fun formatting(builder: FormatBuilder.() -> Unit) = formatting.apply(builder)
 
     @ComponentDSL
-    override fun children(builder: DSLBuilder.() -> Unit): Component {
+    fun children(builder: DSLBuilder.() -> Unit): Component {
         val component = DSLBuilder().apply(builder).build()
         children += component
         return component
@@ -39,15 +40,24 @@ abstract class ComponentBuilder internal constructor() : Component.Builder {
 
 class TextComponentBuilder internal constructor(private val text: String) : ComponentBuilder() {
 
-    override fun build() = TextComponent(text, formatting.build(), color, insertion, clickEvent, hoverEvent, children)
+    fun build(): TextComponent {
+        val (bold, italic, underlined, strikethrough, obfuscated) = formatting.build()
+        return TextComponent(text, bold, italic, underlined, strikethrough, obfuscated, color, insertion, clickEvent, hoverEvent, children)
+    }
 }
 
 class TranslationComponentBuilder internal constructor(private val key: String) : ComponentBuilder() {
 
-    override fun build() = TranslationComponent(key, formatting.build(), color, insertion, clickEvent, hoverEvent, children)
+    fun build(): TranslationComponent {
+        val (bold, italic, underlined, strikethrough, obfuscated) = formatting.build()
+        return TranslationComponent(key, bold, italic, underlined, strikethrough, obfuscated, color, insertion, clickEvent, hoverEvent, children)
+    }
 }
 
 class KeybindComponentBuilder internal constructor(private val keybind: String) : ComponentBuilder() {
 
-    override fun build() = KeybindComponent(keybind, formatting.build(), color, insertion, clickEvent, hoverEvent, children)
+    fun build(): KeybindComponent {
+        val (bold, italic, underlined, strikethrough, obfuscated) = formatting.build()
+        return KeybindComponent(keybind, bold, italic, underlined, strikethrough, obfuscated, color, insertion, clickEvent, hoverEvent, children)
+    }
 }

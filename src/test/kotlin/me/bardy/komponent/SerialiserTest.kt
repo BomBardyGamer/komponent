@@ -4,13 +4,10 @@ import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.modules.SerializersModule
 import kotlinx.serialization.modules.contextual
-import kotlinx.serialization.modules.polymorphic
 import kotlinx.serialization.serializer
-import me.bardy.komponent.colour.NamedColor
-import me.bardy.komponent.dsl.component
-import me.bardy.komponent.event.ClickEvent
+import me.bardy.komponent.colour.ColourSerialiser
+import me.bardy.komponent.colour.EmptyColor
 import me.bardy.komponent.event.openURL
-import me.bardy.komponent.serialisers.*
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
@@ -22,40 +19,27 @@ class SerialiserTest {
         val json = Json {}
         val clickEvent = openURL("https://example.com")
 
-        val expectedString = "{\"open_url\": \"https://example.com\"}"
+        val expectedString = "\"clickEvent\":{\"action\":\"open_url\",\"value\":\"https://example.com\"}"
         assertEquals(expectedString, json.encodeToString(clickEvent))
     }
 
     @Test
     fun `test text component serialisation`() {
-        val component = component {
-            text("Hello World!") {
-                color = NamedColor.WHITE
-                insertion = "I am Mr. Insertor"
-                formatting {
-                    bold = true
-                }
-                clickEvent = openURL("https://example.com")
-            }
-        }
+        val component = TextComponent(
+            "Hello World!",
+            null,
+            null,
+            null,
+            null,
+            null,
+            EmptyColor,
+            null,
+            null,
+            null,
+            emptyList()
+        )
 
-        val serialisersModule = SerializersModule {
-            polymorphic(Component::class) {
-                subclass(TextComponent::class, TextComponentSerialiser)
-                subclass(TranslationComponent::class, TranslationComponentSerialiser)
-                subclass(KeybindComponent::class, KeybindComponentSerialiser)
-            }
-
-            polymorphic(ClickEvent::class) {
-                subclass(ClickEvent.OpenURL::class, OpenURLSerialiser)
-                subclass(ClickEvent.RunCommand::class, RunCommandSerialiser)
-                subclass(ClickEvent.SuggestCommand::class, SuggestCommandSerialiser)
-                subclass(ClickEvent.ChangePage::class, ChangePageSerialiser)
-                subclass(ClickEvent.CopyToClipboard::class, CopyToClipboardSerialiser)
-            }
-        }
-
-        val jsonString = Json { serializersModule = serialisersModule }.encodeToString(serializer(), component)
+        val jsonString = Json {}.encodeToString(serializer(), component)
 
         println(jsonString)
     }

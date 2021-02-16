@@ -1,6 +1,7 @@
 package me.bardy.komponent.colour
 
 import kotlinx.serialization.KSerializer
+import kotlinx.serialization.Serializable
 import kotlinx.serialization.descriptors.PrimitiveKind
 import kotlinx.serialization.descriptors.PrimitiveSerialDescriptor
 import kotlinx.serialization.encoding.Decoder
@@ -30,6 +31,7 @@ import kotlinx.serialization.encoding.Encoder
  * @see NamedColor
  * @see RGBColor
  */
+@Serializable(with = ColourSerialiser::class)
 interface Color {
 
     val value: Int
@@ -79,31 +81,23 @@ interface Color {
     }
 }
 
+internal object EmptyColor : Color {
+
+    override val value = -1
+}
+
 internal object ColourSerialiser : KSerializer<Color> {
 
-    override val descriptor = PrimitiveSerialDescriptor("Colour", PrimitiveKind.INT)
+    override val descriptor = PrimitiveSerialDescriptor("Color", PrimitiveKind.INT)
 
     override fun deserialize(decoder: Decoder): Color {
         val value = decoder.decodeString().removePrefix("#").toInt(16)
+        if (value < 0) return EmptyColor
         return NamedColor.from(value) ?: RGBColor(value)
     }
 
     override fun serialize(encoder: Encoder, value: Color) {
         encoder.encodeString(value.value.toHexString())
-    }
-}
-
-internal object NullableColourSerialiser : KSerializer<Color?> {
-
-    override val descriptor = PrimitiveSerialDescriptor("Colour", PrimitiveKind.INT)
-
-    override fun deserialize(decoder: Decoder): Color {
-        val value = decoder.decodeString().removePrefix("#").toInt(16)
-        return NamedColor.from(value) ?: RGBColor(value)
-    }
-
-    override fun serialize(encoder: Encoder, value: Color?) {
-        if (value != null) encoder.encodeString(value.value.toHexString())
     }
 }
 

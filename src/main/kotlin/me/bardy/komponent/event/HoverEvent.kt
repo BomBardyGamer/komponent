@@ -2,12 +2,17 @@
 package me.bardy.komponent.event
 
 import kotlinx.serialization.Serializable
+import me.bardy.komponent.Component
 
-// W.I.P
+/**
+ * Represents a hover event for a [Component]
+ *
+ * @author Callum Seabrook
+ */
 @Serializable
-class HoverEvent<T> internal constructor(
+data class HoverEvent internal constructor(
     val action: HoverAction,
-    val content: T
+    val contents: String
 )
 
 fun showText(text: String) = HoverEvent(HoverAction.SHOW_TEXT, text)
