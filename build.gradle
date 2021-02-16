@@ -1,6 +1,9 @@
 plugins {
     id 'org.jetbrains.kotlin.jvm' version '1.4.30'
     id 'org.jetbrains.kotlin.plugin.serialization' version '1.4.30'
+    id 'maven-publish'
+    id 'signing'
+    id 'org.jetbrains.dokka' version '1.4.20'
 }
 
 group 'me.bardy'
@@ -8,6 +11,7 @@ version '1.0'
 
 repositories {
     mavenCentral()
+    jcenter()
 }
 
 dependencies {
@@ -33,4 +37,73 @@ compileTestKotlin {
 
 test {
     useJUnitPlatform()
+}
+
+task sourcesJar(type: Jar) {
+    from sourceSets.main.allSource
+    classifier 'sources'
+}
+
+task javadocJar(type: Jar) {
+    from dokkaJavadoc
+    classifier 'javadoc'
+}
+
+publishing {
+    repositories {
+        maven {
+            def releasesRepoUrl = "https://oss.sonatype.org/service/local/staging/deploy/maven2/"
+            def snapshotsRepoUrl = "https://oss.sonatype.org/content/repositories/snapshots/"
+            url = version.endsWith('SNAPSHOT') ? snapshotsRepoUrl : releasesRepoUrl
+
+            credentials {
+                username project.hasProperty('mavenUsername') ? mavenUsername : System.getenv('MAVEN_USERNAME')
+                password project.hasProperty('mavenPassword') ? mavenPassword : System.getenv('MAVEN_PASSWORD')
+            }
+        }
+    }
+
+    publications {
+        mavenJava(MavenPublication) {
+            artifactId = 'komponent'
+
+            from components.kotlin
+            artifact sourcesJar
+            artifact javadocJar
+
+            pom {
+                name = 'Komponent'
+                description = 'An easy to use, fast and lightweight Minecraft chat component library'
+                url = 'https://komponent.bardy.me'
+
+                packaging = 'jar'
+
+                licenses {
+                    license {
+                        name = 'MIT License'
+                        url = 'https://opensource.org/licenses/MIT'
+                    }
+                }
+
+                developers {
+                    developer {
+                        id = 'bombardygamer'
+                        name = 'Callum Seabrook'
+                        email = 'callum.seabrook@prevarinite.com'
+                        timezone = 'Europe/London'
+                    }
+                }
+
+                scm {
+                    connection = 'scm:git:git://github.com/BomBardyGamer/komponent.git'
+                    developerConnection = 'scm:git:ssh://github.com:BomBardyGamer/komponent.git'
+                    url = 'https://github.com/BomBardyGamer/komponent'
+                }
+            }
+        }
+    }
+}
+
+signing {
+    sign publishing.publications.mavenJava
 }
