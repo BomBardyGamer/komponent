@@ -1,28 +1,17 @@
 package me.bardy.komponent
 
 import kotlinx.serialization.decodeFromString
-import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.serializer
 import me.bardy.komponent.colour.Color
-import me.bardy.komponent.colour.EmptyColor
-import me.bardy.komponent.dsl.component
-import me.bardy.komponent.event.*
-import java.util.*
+import me.bardy.komponent.colour.NamedColor
+import me.bardy.komponent.event.ClickEvent
+import me.bardy.komponent.event.openURL
+import me.bardy.komponent.event.showText
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
-// tests are a W.I.P
 class SerialiserTest {
-
-    @Test
-    fun `test click event serialisation`() {
-        val json = Json {}
-        val clickEvent = openURL("https://example.com")
-
-        val expectedString = "\"clickEvent\":{\"action\":\"open_url\",\"value\":\"https://example.com\"}"
-        assertEquals(expectedString, json.encodeToString(clickEvent))
-    }
 
     @Test
     fun `test text component serialisation`() {
@@ -38,44 +27,109 @@ class SerialiserTest {
             clickEvent = openURL("https://example.com"),
             hoverEvent = showText("I am hover text!"),
             extra = listOf(
-                TranslationComponent(
-                    "i.am.a.translation.key",
-                    null,
-                    null,
-                    null,
-                    null,
-                    null,
-                    EmptyColor,
-                    null,
-                    null,
-                    null,
-                    emptyList()
-                )
+                TranslationComponent("i.am.a.translation.key"),
+                KeybindComponent("key.forward"),
+                ScoreComponent(Score("test", "test", "test"))
             )
         )
 
-        val jsonString = Json {}.encodeToString(serializer(), component)
-
-        println(jsonString)
-    }
-
-    @Test
-    fun `test serialisation of DSL`() {
-        val component = component {
-            text("Hello World!") {
-
+        val expectedString = """
+            {
+                "text": "Hello World!",
+                "bold": true,
+                "italic": true,
+                "underlined": true,
+                "strikethrough": true,
+                "obfuscated": true,
+                "color": "#ffffff",
+                "insertion": "I am insertion!",
+                "clickEvent": {
+                    "action": "open_url",
+                    "value": "https://example.com"
+                },
+                "hoverEvent": {
+                    "action": "show_text",
+                    "contents": "I am hover text!"
+                },
+                "extra": [
+                    {
+                        "translate": "i.am.a.translation.key"
+                    },
+                    {
+                        "keybind": "key.forward"
+                    },
+                    {
+                        "score": {
+                            "name": "test",
+                            "objective": "test",
+                            "value": "test"
+                        }
+                    }
+                ]
             }
-        }
+        """.trimIndent()
+        val jsonString = Json { prettyPrint = true }.encodeToString(serializer(), component)
 
-        println(Json {}.encodeToString(Component.Companion, component))
+        assertEquals(expectedString, jsonString)
     }
 
     @Test
-    fun `test component deserialisation`() {
-        val componentRaw = "{\"text\":\"I am text!\"}"
+    fun `test complex component deserialisation`() {
+        val componentRaw = """
+            {
+                "text": "Hello World!",
+                "bold": true,
+                "italic": true,
+                "underlined": true,
+                "strikethrough": true,
+                "obfuscated": true,
+                "color": "#ffffff",
+                "insertion": "I am insertion!",
+                "clickEvent": {
+                    "action": "open_url",
+                    "value": "https://example.com"
+                },
+                "hoverEvent": {
+                    "action": "show_text",
+                    "contents": "I am hover text!"
+                },
+                "extra": [
+                    {
+                        "translate": "i.am.a.translation.key"
+                    },
+                    {
+                        "keybind": "key.forward"
+                    },
+                    {
+                        "score": {
+                            "name": "test",
+                            "objective": "test",
+                            "value": "test"
+                        }
+                    }
+                ]
+            }
+        """.trimIndent()
 
-        val component = Json {}.decodeFromString<TextComponent>(componentRaw)
+        val expected = TextComponent(
+            text = "Hello World!",
+            bold = true,
+            italic = true,
+            underlined = true,
+            strikethrough = true,
+            obfuscated = true,
+            color = NamedColor.WHITE,
+            insertion = "I am insertion!",
+            clickEvent = openURL("https://example.com"),
+            hoverEvent = showText("I am hover text!"),
+            extra = listOf(
+                TranslationComponent("i.am.a.translation.key"),
+                KeybindComponent("key.forward"),
+                ScoreComponent(Score("test", "test", "test"))
+            )
+        )
+        val component = Json { prettyPrint = true }.decodeFromString<TextComponent>(componentRaw)
 
-        println(component.toString())
+        assertEquals(expected, component)
     }
 }

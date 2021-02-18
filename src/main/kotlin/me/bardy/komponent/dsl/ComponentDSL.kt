@@ -1,44 +1,28 @@
+@file:Suppress("unused")
 package me.bardy.komponent.dsl
 
 import me.bardy.komponent.Component
+import me.bardy.komponent.Score
 
 @DslMarker
 annotation class ComponentDSL
 
-
 @ComponentDSL
-inline fun component(builder: RootComponentBuilder.() -> Unit): Component {
-    return RootComponentBuilder().apply(builder).build()
+inline fun textComponent(text: String, builder: TextComponentBuilder.() -> Unit = {}): Component {
+    return TextComponentBuilder(text).apply(builder).build()
 }
 
 @ComponentDSL
-class RootComponentBuilder : ComponentBuilder() {
+inline fun translationComponent(key: String, builder: TranslationComponentBuilder.() -> Unit = {}): Component {
+    return TranslationComponentBuilder(key).apply(builder).build()
+}
 
-    private var rootComponent: Component? = null
+@ComponentDSL
+inline fun keybindComponent(keybind: String, builder: KeybindComponentBuilder.() -> Unit = {}): Component {
+    return KeybindComponentBuilder(keybind).apply(builder).build()
+}
 
-    @ComponentDSL
-    fun text(value: String, builder: TextComponentBuilder.() -> Unit = {}) {
-        if (rootComponent != null) throw rootComponentSet()
-        rootComponent = TextComponentBuilder(value).apply(builder).build()
-    }
-
-    @ComponentDSL
-    fun translation(key: String, with: TranslationComponentBuilder.() -> Unit = {}) {
-        if (rootComponent != null) throw rootComponentSet()
-        rootComponent = TranslationComponentBuilder(key).apply(with).build()
-    }
-
-    @ComponentDSL
-    fun keybind(keybind: String, builder: KeybindComponentBuilder.() -> Unit = {}) {
-        if (rootComponent != null) throw rootComponentSet()
-        rootComponent = KeybindComponentBuilder(keybind).apply(builder).build()
-    }
-
-    private fun rootComponentSet() = UnsupportedOperationException("Root component has already been set!")
-
-    // TODO: Figure out how to make this work, because I haven't a clue at the moment
-    fun build(): Component {
-        if (rootComponent == null) throw UnsupportedOperationException("Root component must be set!")
-        return requireNotNull(rootComponent)
-    }
+@ComponentDSL
+inline fun scoreComponent(score: Score, builder: ScoreComponentBuilder.() -> Unit = {}): Component {
+    return ScoreComponentBuilder(score).apply(builder).build()
 }

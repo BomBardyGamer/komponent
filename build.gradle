@@ -4,10 +4,11 @@ plugins {
     id 'maven-publish'
     id 'signing'
     id 'org.jetbrains.dokka' version '1.4.20'
+    id 'info.solidsoft.pitest' version '1.5.1'
 }
 
 group 'me.bardy'
-version '1.0'
+version '1.1'
 
 repositories {
     mavenCentral()
@@ -107,3 +108,13 @@ publishing {
 signing {
     sign publishing.publications.mavenJava
 }
+
+pitest {
+    junit5PluginVersion = '0.12'
+    testSourceSets = [sourceSets.test]
+    mainSourceSets = [sourceSets.main]
+    jvmArgs = ["-Xmx1024M"]
+    useClasspathFile = true
+}
+
+tasks.build.shouldRunAfter(tasks.test)

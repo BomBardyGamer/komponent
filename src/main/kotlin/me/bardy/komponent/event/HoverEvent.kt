@@ -2,6 +2,7 @@
 package me.bardy.komponent.event
 
 import kotlinx.serialization.KSerializer
+import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.descriptors.PrimitiveKind
 import kotlinx.serialization.descriptors.PrimitiveSerialDescriptor
@@ -11,6 +12,7 @@ import kotlinx.serialization.json.JsonElement
 import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.json.JsonPrimitive
 import me.bardy.komponent.Component
+import me.bardy.komponent.dsl.ComponentDSL
 import java.util.UUID
 
 /**
@@ -19,23 +21,35 @@ import java.util.UUID
  * @author Callum Seabrook
  */
 @Serializable
-data class HoverEvent(
+data class HoverEvent internal constructor(
     val action: HoverAction,
     val contents: JsonElement
 )
 
+/**
+ * Creates a new [HoverEvent] that shows text when hovered
+ */
+@ComponentDSL
 fun showText(text: String) = HoverEvent(HoverAction.SHOW_TEXT, JsonPrimitive(text))
 
+/**
+ * Creates a new [HoverEvent] that shows an item when hovered
+ */
+@ComponentDSL
 fun showItem(item: Item) = HoverEvent(HoverAction.SHOW_ITEM, JsonObject(item.toJSON()))
 
+/**
+ * Creates a new [HoverEvent] that shows an entity when hovered
+ */
+@ComponentDSL
 fun showEntity(entity: Entity) = HoverEvent(HoverAction.SHOW_ENTITY, JsonObject(entity.toJSON()))
 
 @Serializable
 enum class HoverAction {
 
-    SHOW_TEXT,
-    SHOW_ITEM,
-    SHOW_ENTITY;
+    @SerialName("show_text") SHOW_TEXT,
+    @SerialName("show_item") SHOW_ITEM,
+    @SerialName("show_entity") SHOW_ENTITY;
 
     override fun toString() = name.toLowerCase()
 }

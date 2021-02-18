@@ -34,7 +34,7 @@ data class RGB(
     /**
      * Converts this RGB colour to a single RGB integer
      */
-    fun toInt() = red shl 16 or green shl 8 or blue
+    fun toInt() = (red shl 16) or (green shl 8) or blue
 
     @Suppress("unused") // API functions
     companion object {

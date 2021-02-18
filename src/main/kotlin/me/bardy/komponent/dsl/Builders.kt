@@ -1,9 +1,7 @@
+@file:Suppress("unused")
 package me.bardy.komponent.dsl
 
-import me.bardy.komponent.Component
-import me.bardy.komponent.KeybindComponent
-import me.bardy.komponent.TextComponent
-import me.bardy.komponent.TranslationComponent
+import me.bardy.komponent.*
 import me.bardy.komponent.colour.Color
 import me.bardy.komponent.colour.EmptyColor
 import me.bardy.komponent.event.ClickEvent
@@ -31,8 +29,29 @@ abstract class ComponentBuilder internal constructor() {
     fun formatting(builder: FormatBuilder.() -> Unit) = formatting.apply(builder)
 
     @ComponentDSL
-    fun children(builder: RootComponentBuilder.() -> Unit): Component {
-        val component = RootComponentBuilder().apply(builder).build()
+    fun text(text: String, builder: TextComponentBuilder.() -> Unit = {}): Component {
+        val component = TextComponentBuilder(text).apply(builder).build()
+        children += component
+        return component
+    }
+
+    @ComponentDSL
+    fun translation(key: String, builder: TranslationComponentBuilder.() -> Unit = {}): Component {
+        val component = TranslationComponentBuilder(key).apply(builder).build()
+        children += component
+        return component
+    }
+
+    @ComponentDSL
+    fun keybind(keybind: String, builder: KeybindComponentBuilder.() -> Unit = {}): Component {
+        val component = KeybindComponentBuilder(keybind).apply(builder).build()
+        children += component
+        return component
+    }
+
+    @ComponentDSL
+    fun score(score: Score, builder: ScoreComponentBuilder.() -> Unit = {}): Component {
+        val component = ScoreComponentBuilder(score).apply(builder).build()
         children += component
         return component
     }
@@ -46,7 +65,7 @@ class TextComponentBuilder(private val text: String) : ComponentBuilder() {
     }
 }
 
-class TranslationComponentBuilder internal constructor(private val key: String) : ComponentBuilder() {
+class TranslationComponentBuilder(private val key: String) : ComponentBuilder() {
 
     fun build(): TranslationComponent {
         val (bold, italic, underlined, strikethrough, obfuscated) = formatting.build()
@@ -54,10 +73,18 @@ class TranslationComponentBuilder internal constructor(private val key: String) 
     }
 }
 
-class KeybindComponentBuilder internal constructor(private val keybind: String) : ComponentBuilder() {
+class KeybindComponentBuilder(private val keybind: String) : ComponentBuilder() {
 
     fun build(): KeybindComponent {
         val (bold, italic, underlined, strikethrough, obfuscated) = formatting.build()
         return KeybindComponent(keybind, bold, italic, underlined, strikethrough, obfuscated, color, insertion, clickEvent, hoverEvent, children)
+    }
+}
+
+class ScoreComponentBuilder(private val score: Score) : ComponentBuilder() {
+
+    fun build(): ScoreComponent {
+        val (bold, italic, underlined, strikethrough, obfuscated) = formatting.build()
+        return ScoreComponent(score, bold, italic, underlined, strikethrough, obfuscated, color, insertion, clickEvent, hoverEvent, children)
     }
 }

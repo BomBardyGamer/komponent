@@ -1,29 +1,24 @@
 package me.bardy.komponent
 
-import kotlinx.serialization.*
-import kotlinx.serialization.descriptors.buildClassSerialDescriptor
-import kotlinx.serialization.descriptors.element
-import kotlinx.serialization.encoding.Decoder
-import kotlinx.serialization.encoding.Encoder
-import kotlinx.serialization.encoding.decodeStructure
-import kotlinx.serialization.encoding.encodeStructure
+import kotlinx.serialization.DeserializationStrategy
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.JsonContentPolymorphicSerializer
 import kotlinx.serialization.json.JsonElement
 import kotlinx.serialization.json.jsonObject
 import me.bardy.komponent.colour.Color
 import me.bardy.komponent.colour.ColourSerialiser
+import me.bardy.komponent.colour.EmptyColor
 import me.bardy.komponent.event.ClickEvent
 import me.bardy.komponent.event.HoverEvent
-import me.bardy.komponent.serialisers.componentElements
-import me.bardy.komponent.serialisers.decodeComponent
-import me.bardy.komponent.serialisers.encodeComponentElements
 
 /**
  * The superinterface for all chat components
  *
  * @author Callum Seabrook
  */
-abstract class Component protected constructor() {
+@Serializable(with = Component.Companion::class)
+sealed class Component {
 
     abstract val bold: Boolean?
     abstract val italic: Boolean?
@@ -44,154 +39,74 @@ abstract class Component protected constructor() {
     companion object : JsonContentPolymorphicSerializer<Component>(Component::class) {
 
         override fun selectDeserializer(element: JsonElement): DeserializationStrategy<out Component> = when {
-            "text" in element.jsonObject -> TextComponent.Companion
-            "translate" in element.jsonObject -> TranslationComponent.Companion
-            "keybind" in element.jsonObject -> KeybindComponent.Companion
-            "score" in element.jsonObject -> ScoreComponent.Companion
-            else -> serializer() // we should never reach here
+            "text" in element.jsonObject -> TextComponent.serializer()
+            "translate" in element.jsonObject -> TranslationComponent.serializer()
+            "keybind" in element.jsonObject -> KeybindComponent.serializer()
+            "score" in element.jsonObject -> ScoreComponent.serializer()
+            else -> throw IllegalArgumentException("Cannot deserialise type $element! (How did we get here?)")
         }
     }
 }
 
-@Serializable(with = TextComponent.Companion::class)
+@Serializable
 data class TextComponent internal constructor(
-    @SerialName("text") val text: String,
-    override val bold: Boolean?,
-    override val italic: Boolean?,
-    override val underlined: Boolean?,
-    override val strikethrough: Boolean?,
-    override val obfuscated: Boolean?,
-    @Serializable(with = ColourSerialiser::class) override val color: Color,
-    override val insertion: String?,
-    override val clickEvent: ClickEvent?,
-    override val hoverEvent: HoverEvent?,
-    override val extra: List<Component>
-) : Component() {
+    val text: String,
+    override val bold: Boolean? = null,
+    override val italic: Boolean? = null,
+    override val underlined: Boolean? = null,
+    override val strikethrough: Boolean? = null,
+    override val obfuscated: Boolean? = null,
+    @Serializable(with = ColourSerialiser::class) override val color: Color = EmptyColor,
+    override val insertion: String? = null,
+    override val clickEvent: ClickEvent? = null,
+    override val hoverEvent: HoverEvent? = null,
+    override val extra: List<Component> = emptyList()
+) : Component()
 
-    companion object : KSerializer<TextComponent> {
-
-        override val descriptor = buildClassSerialDescriptor("TextComponent") {
-            element<String>("text")
-            componentElements()
-        }
-
-        override fun serialize(encoder: Encoder, value: TextComponent) = encoder.encodeStructure(descriptor) {
-            encodeStringElement(descriptor, 0, value.text)
-            encodeComponentElements(descriptor, value)
-        }
-
-        override fun deserialize(decoder: Decoder): TextComponent = decoder.decodeStructure(descriptor) {
-            val text = decodeStringElement(descriptor, 0)
-            val (bold, italic, underlined, strikethrough, obfuscated, color, insertion, clickEvent, hoverEvent, extra) = decodeComponent(descriptor)
-            TextComponent(text, bold, italic, underlined, strikethrough, obfuscated, color, insertion, clickEvent, hoverEvent, extra)
-        }
-    }
-}
-
-@Serializable(with = TranslationComponent.Companion::class)
+@Serializable
 data class TranslationComponent internal constructor(
     @SerialName("translate") val translationKey: String,
-    override val bold: Boolean?,
-    override val italic: Boolean?,
-    override val underlined: Boolean?,
-    override val strikethrough: Boolean?,
-    override val obfuscated: Boolean?,
-    @Serializable(with = ColourSerialiser::class) override val color: Color,
-    override val insertion: String?,
-    override val clickEvent: ClickEvent?,
-    override val hoverEvent: HoverEvent?,
-    override val extra: List<Component>
-) : Component() {
+    override val bold: Boolean? = null,
+    override val italic: Boolean? = null,
+    override val underlined: Boolean? = null,
+    override val strikethrough: Boolean? = null,
+    override val obfuscated: Boolean? = null,
+    @Serializable(with = ColourSerialiser::class) override val color: Color = EmptyColor,
+    override val insertion: String? = null,
+    override val clickEvent: ClickEvent? = null,
+    override val hoverEvent: HoverEvent? = null,
+    override val extra: List<Component> = emptyList()
+) : Component()
 
-    companion object : KSerializer<TranslationComponent> {
-
-        override val descriptor = buildClassSerialDescriptor("TranslationComponent") {
-            element<String>("translate")
-            componentElements("with")
-        }
-
-        override fun serialize(encoder: Encoder, value: TranslationComponent) = encoder.encodeStructure(descriptor) {
-            encodeStringElement(descriptor, 0, value.translationKey)
-            encodeComponentElements(descriptor, value)
-        }
-
-        override fun deserialize(decoder: Decoder): TranslationComponent = decoder.decodeStructure(descriptor) {
-            val translationKey = decodeStringElement(descriptor, 0)
-            val (bold, italic, underlined, strikethrough, obfuscated, color, insertion, clickEvent, hoverEvent, extra) = decodeComponent(descriptor)
-            TranslationComponent(translationKey, bold, italic, underlined, strikethrough, obfuscated, color, insertion, clickEvent, hoverEvent, extra)
-        }
-    }
-}
-
-@Serializable(with = KeybindComponent.Companion::class)
+@Serializable
 data class KeybindComponent internal constructor(
-    @SerialName("keybind") val keybind: String,
-    override val bold: Boolean?,
-    override val italic: Boolean?,
-    override val underlined: Boolean?,
-    override val strikethrough: Boolean?,
-    override val obfuscated: Boolean?,
-    @Serializable(with = ColourSerialiser::class) override val color: Color,
-    override val insertion: String?,
-    override val clickEvent: ClickEvent?,
-    override val hoverEvent: HoverEvent?,
-    override val extra: List<Component>
-) : Component() {
+    val keybind: String,
+    override val bold: Boolean? = null,
+    override val italic: Boolean? = null,
+    override val underlined: Boolean? = null,
+    override val strikethrough: Boolean? = null,
+    override val obfuscated: Boolean? = null,
+    @Serializable(with = ColourSerialiser::class) override val color: Color = EmptyColor,
+    override val insertion: String? = null,
+    override val clickEvent: ClickEvent? = null,
+    override val hoverEvent: HoverEvent? = null,
+    override val extra: List<Component> = emptyList()
+) : Component()
 
-    companion object : KSerializer<KeybindComponent> {
-
-        override val descriptor = buildClassSerialDescriptor("KeybindComponent") {
-            element<String>("keybind")
-            componentElements()
-        }
-
-        override fun serialize(encoder: Encoder, value: KeybindComponent) = encoder.encodeStructure(descriptor) {
-            encodeStringElement(descriptor, 0, value.keybind)
-            encodeComponentElements(descriptor, value)
-        }
-
-        override fun deserialize(decoder: Decoder): KeybindComponent = decoder.decodeStructure(descriptor) {
-            val keybind = decodeStringElement(descriptor, 0)
-            val (bold, italic, underlined, strikethrough, obfuscated, color, insertion, clickEvent, hoverEvent, extra) = decodeComponent(descriptor)
-            KeybindComponent(keybind, bold, italic, underlined, strikethrough, obfuscated, color, insertion, clickEvent, hoverEvent, extra)
-        }
-    }
-}
-
-@Serializable(with = ScoreComponent.Companion::class)
+@Serializable
 data class ScoreComponent internal constructor(
-    @SerialName("score") val score: Score,
-    override val bold: Boolean?,
-    override val italic: Boolean?,
-    override val underlined: Boolean?,
-    override val strikethrough: Boolean?,
-    override val obfuscated: Boolean?,
-    @Serializable(with = ColourSerialiser::class) override val color: Color,
-    override val insertion: String?,
-    override val clickEvent: ClickEvent?,
-    override val hoverEvent: HoverEvent?,
-    override val extra: List<Component>
-) : Component() {
-
-    companion object : KSerializer<ScoreComponent> {
-
-        override val descriptor = buildClassSerialDescriptor("ScoreComponent") {
-            element<Score>("score")
-            componentElements()
-        }
-
-        override fun serialize(encoder: Encoder, value: ScoreComponent) = encoder.encodeStructure(descriptor) {
-            encodeSerializableElement(descriptor, 0, Score.serializer(), value.score)
-            encodeComponentElements(descriptor, value)
-        }
-
-        override fun deserialize(decoder: Decoder): ScoreComponent = decoder.decodeStructure(descriptor) {
-            val score = decodeSerializableElement(descriptor, 0, Score.serializer())
-            val (bold, italic, underlined, strikethrough, obfuscated, color, insertion, clickEvent, hoverEvent, extra) = decodeComponent(descriptor)
-            ScoreComponent(score, bold, italic, underlined, strikethrough, obfuscated, color, insertion, clickEvent, hoverEvent, extra)
-        }
-    }
-}
+    val score: Score,
+    override val bold: Boolean? = null,
+    override val italic: Boolean? = null,
+    override val underlined: Boolean? = null,
+    override val strikethrough: Boolean? = null,
+    override val obfuscated: Boolean? = null,
+    @Serializable(with = ColourSerialiser::class) override val color: Color = EmptyColor,
+    override val insertion: String? = null,
+    override val clickEvent: ClickEvent? = null,
+    override val hoverEvent: HoverEvent? = null,
+    override val extra: List<Component> = emptyList()
+) : Component()
 
 @Serializable
 data class Score(
