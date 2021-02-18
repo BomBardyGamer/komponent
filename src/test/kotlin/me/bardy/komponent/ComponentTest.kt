@@ -47,11 +47,19 @@ class ComponentTest {
 
     @Test
     fun `test translation component serialisation`() {
-        val component = TranslationComponent("i.am.a.translation.key")
+        val component = TranslationComponent(
+            "i.am.a.translation.key",
+            extra = listOf(TextComponent("I am text!"))
+        )
 
         val expectedString = """
             {
-                "translate": "i.am.a.translation.key"
+                "translate": "i.am.a.translation.key",
+                "with": [
+                    {
+                        "text": "I am text!"
+                    }
+                ]
             }
         """.trimIndent()
         val jsonString = json.encodeToString(component)
@@ -61,11 +69,19 @@ class ComponentTest {
 
     @Test
     fun `test keybind component serialisation`() {
-        val component = KeybindComponent("key.forward")
+        val component = KeybindComponent(
+            "key.forward",
+            extra = listOf(TextComponent("I am text!"))
+        )
 
         val expectedString = """
             {
-                "keybind": "key.forward"
+                "keybind": "key.forward",
+                "extra": [
+                    {
+                        "text": "I am text!"
+                    }
+                ]
             }
         """.trimIndent()
         val jsonString = json.encodeToString(component)
@@ -75,7 +91,10 @@ class ComponentTest {
 
     @Test
     fun `test score component serialisation`() {
-        val component = ScoreComponent(Score("test", "test", "test"))
+        val component = ScoreComponent(
+            Score("test", "test", "test"),
+            extra = listOf(TextComponent("I am text!"))
+        )
 
         val expectedString = """
             {
@@ -83,7 +102,12 @@ class ComponentTest {
                     "name": "test",
                     "objective": "test",
                     "value": "test"
-                }
+                },
+                "extra": [
+                    {
+                        "text": "I am text!"
+                    }
+                ]
             }
         """.trimIndent()
         val jsonString = json.encodeToString(component)

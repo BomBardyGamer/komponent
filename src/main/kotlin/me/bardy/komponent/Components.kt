@@ -75,7 +75,7 @@ data class TranslationComponent internal constructor(
     override val insertion: String? = null,
     override val clickEvent: ClickEvent? = null,
     override val hoverEvent: HoverEvent? = null,
-    override val extra: List<Component> = emptyList()
+    @SerialName("with") override val extra: List<Component> = emptyList()
 ) : Component()
 
 @Serializable
